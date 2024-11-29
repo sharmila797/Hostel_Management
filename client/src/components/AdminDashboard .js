@@ -26,6 +26,7 @@ const AdminDashboard = () => {
     // Function to toggle submenu (profile or home)
     const toggleSubmenu = (menu) => {
         // If the clicked menu is already open, close it. Otherwise, open the clicked menu and close others.
+        console.log("submenu",menu)
         setOpenSubmenu(openSubmenu === menu ? null : menu);
       };
     
