@@ -3,13 +3,13 @@ const mongoose =require('mongoose')   // using Node.js 'require() function'
 const database = require('../../config/Databaseconnection')
 
 database();
-const UserSchema=new mongoose.Schema({
+              const UserSchema=new mongoose.Schema({
     userid:{type:String,required:true},
     name:{type:String,required:true},
     email:{type:String,required:true,unique:true},
     password:{type:String,required:true},
     status:{type:String,default:'Active'},
-    role:{type:String,default:'Admin'}
+    role:{type:String,required:true}
 },
 
               {collection:"User"}
@@ -30,9 +30,10 @@ const UserModel= mongoose.model("user",UserSchema);
 
 UserModel.create({
     userid: 'admin',
-    name: 'admin',
+    name: 'Admin',
     email: 'admin@example.com',
-    password: 'password123'
+    password: 'password123',
+    role:'Admin'
   }).then(() => {
     console.log("Admin user created");
   }).catch(err => {
@@ -43,16 +44,28 @@ UserModel.create({
     }
   });
 
-//   const newUser = new UserModel({
-//     userid: 'user123',
-//     name: 'John Doe',
-//     email: 'john@example.com',
-//     password: 'securepassword123'
-//   });
+   UserModel.create({
+    userid: 'warden',
+    name: 'Warden',
+    email: 'warden@example.com',
+    password: 'password123',
+    role:'Warden'
+  }).then(()=>{
+   console.log("Warden user created") 
+  }).catch((err)=>{
+    if(err.code === 11000)
+    {
+      console.log("Warden user already exists") 
+    }
+    else{
+      console.log(err)
+    }
+    
+  })
   
-//   newUser.save()
-//     .then(() => console.log("User saved and collection created!"))
-//     .catch((err) => console.log("Error saving user: ", err));
+  // newUser.save()
+  //   .then(() => console.log("User saved and collection created!"))
+  //   .catch((err) => console.log("Error saving user: ", err));
 
 
 module.exports=UserModel

@@ -4,17 +4,18 @@ import {
     Home as HomeIcon, Person as PersonIcon, Settings as SettingsIcon, ExpandLess, ExpandMore,
     MenuOpenOutlined,
     EditNote,
-    RemoveRedEye
+    RemoveRedEye,Apartment
   } from '@mui/icons-material';
+  // import ApartmentIcon from '@mui/icons-material/Apartment';
 import MenuIcon from '@mui/icons-material/Menu';
 import { Link, Outlet, useLocation } from 'react-router-dom';
 import srm from '../Images/srm.png';
 import seal from '../Images/seal.png';
 
-const drawerWidth = 250;
+const drawerWidth = 255;
 
 
-const AdminDashboard = () => {
+const WardenDashboard = () => {
   const [open, setOpen] =useState(false);
   const [openSubmenu, setOpenSubmenu] = useState(null); // State to track which submenu is open
   const location = useLocation(); // Get the current location to determine the selected menu item
@@ -84,7 +85,7 @@ const AdminDashboard = () => {
             {/* <MenuIcon /> */}
             <MenuOpenOutlined />
           </IconButton>
-          <Typography variant="h6">Admin Dashboard</Typography>
+          <Typography variant="h6">Warden Dashboard</Typography>
         </Toolbar>
       </AppBar>
   {/* Sidebar */}
@@ -179,7 +180,7 @@ const AdminDashboard = () => {
             <ListItemIcon sx={listItemIconSx}>
               <PersonIcon />
             </ListItemIcon>
-            {open && <ListItemText primary="User Management" />}
+            {open && <ListItemText primary="Attendance" />}
             {/* {open && (openSubmenu === 'user management' ? <ExpandLess /> : <ExpandMore />)} */}
           </ListItem>
 
@@ -219,7 +220,7 @@ const AdminDashboard = () => {
             </List>
           </Collapse> */}
        
-         {/* Settings */}
+         {/* Settings  */}
          <ListItem
             button
             component={Link}
@@ -230,11 +231,27 @@ const AdminDashboard = () => {
             }}
           >
             <ListItemIcon sx={listItemIconSx}>
-              <SettingsIcon />
+              <Apartment/>
             </ListItemIcon>
-            {open && <ListItemText primary="Settings" />}
+            {open && <ListItemText primary="Room Allocation" />}
           </ListItem>
        
+          {/* Complaint Management */}
+
+          <ListItem
+            button
+            component={Link}
+            to="/settings"
+            sx={{
+              ...listItemSx,
+              ...(isSelected('/settings') && selectedItemSx),
+            }}
+          >
+            <ListItemIcon sx={listItemIconSx}>
+            <EditNote/>
+            </ListItemIcon>
+            {open && <ListItemText primary="Complaint Management" />}
+          </ListItem>
        
           </List>
       </Drawer>
@@ -277,20 +294,129 @@ const AdminDashboard = () => {
   );
 };
 
-export default AdminDashboard;
+export default WardenDashboard;
 
 
 
 
-   {/* <ListItem button>
-            <ListItemText primary="User Management" />
-          </ListItem>
-          <ListItem button>
-            <ListItemText primary="Fee Management" />
-          </ListItem>
-          <ListItem button>
-            <ListItemText primary="Complaint Oversight" />
-          </ListItem>
-          <ListItem button>
-            <ListItemText primary="Analytics & Reporting" />
-          </ListItem> */}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// import React, { useState } from 'react';
+// import { AppBar, Toolbar, Typography, Box, List, ListItem, ListItemIcon, ListItemText, Container, Card, CardContent } from '@mui/material';
+// import { People, Event, Home, Feedback, Announcement } from '@mui/icons-material';
+
+// Define the components to render for each section
+// const components = {
+//   'Student Management': (
+//     <Card>
+//       <CardContent>
+//         <Typography variant="h5">Student Management</Typography>
+//         <p>List and manage student information here.</p>
+//       </CardContent>
+//     </Card>
+//   ),
+//   Attendance: (
+//     <Card>
+//       <CardContent>
+//         <Typography variant="h5">Attendance</Typography>
+//         <p>Record and view student attendance here.</p>
+//       </CardContent>
+//     </Card>
+//   ),
+//   'Room Allocation': (
+//     <Card>
+//       <CardContent>
+//         <Typography variant="h5">Room Allocation</Typography>
+//         <p>Allocate or change student rooms here.</p>
+//       </CardContent>
+//     </Card>
+//   ),
+//   'Complaint Management': (
+//     <Card>
+//       <CardContent>
+//         <Typography variant="h5">Complaint Management</Typography>
+//         <p>View and respond to student complaints here.</p>
+//       </CardContent>
+//     </Card>
+//   ),
+//   Announcements: (
+//     <Card>
+//       <CardContent>
+//         <Typography variant="h5">Announcements</Typography>
+//         <p>Post announcements or notices for students here.</p>
+//       </CardContent>
+//     </Card>
+//   ),
+// };
+
+// const WardenDashboard = () => {
+//   const [activeSection, setActiveSection] = useState('Student Management');
+
+//   // Sidebar navigation items
+//   const menuItems = [
+//     { text: 'Student Management', icon: <People /> },
+//     { text: 'Attendance', icon: <Event /> },
+//     { text: 'Room Allocation', icon: <Home /> },
+//     { text: 'Complaint Management', icon: <Feedback /> },
+//     { text: 'Announcements', icon: <Announcement /> },
+//   ];
+
+//   return (
+//     <Box sx={{ display: 'flex', height: '100vh' }}>
+//       {/* Sidebar */}
+//       <Box sx={{ width: '300px', background: '#f4f4f4', height: '100vh' }}>
+//         <List>
+//           {menuItems.map((item, index) => (
+//             <ListItem
+//               button
+//               key={index}
+//               onClick={() => setActiveSection(item.text)}
+//               selected={activeSection === item.text}
+//             >
+//               <ListItemIcon>{item.icon}</ListItemIcon>
+//               <ListItemText primary={item.text} />
+//             </ListItem>
+//           ))}
+//         </List>
+//       </Box>
+
+//       {/* Main Content */}
+//       <Box sx={{ flexGrow: 1 }}>
+//         <AppBar position="static">
+//           <Toolbar>
+//             <Typography variant="h6" component="div">
+//               Warden Dashboard
+//             </Typography>
+//           </Toolbar>
+//         </AppBar>
+//         <Container sx={{ mt: 4 }}>
+//           {components[activeSection]}
+//         </Container>
+//       </Box>
+//     </Box>
+//   );
+// };
+
+// export default WardenDashboard;
