@@ -17,9 +17,9 @@ const LoginForm = () => {
 
     try {
       const response = await fetchUser(user);
-console.log(response)
+console.log("response",response)
       if (response.data.success) {
-        const role = response.data.data.role;
+        let role = response.data.data.role;
         setError('');
         alert('Login successful!');
         if (role === 'Admin') {
@@ -38,7 +38,6 @@ console.log(response)
   };
 
   const handleKeyPress=(e)=>{
-    console.log("press key",e)
     if(e.key === 'Enter')
     {
       handleLogin();
