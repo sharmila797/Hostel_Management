@@ -45,7 +45,7 @@ console.log("response",response)
   }
   return (
     <Container maxWidth="xs" sx={{ display: 'flex',mt:15, minHeight: '50vh'}}>
-      <Card sx={{ width: '100%',borderRadius: '8px',  // Border radius for rounded corners
+      <Card sx={{ width: '100%',borderRadius: '16px',  // Border radius for rounded corners
   border: '1px solid #d1d5db',
   boxShadow: '0px 4px 12px rgba(0, 0, 0, 0.1)', // Initial shadow
   transition: 'transform 0.3s ease, box-shadow 0.3s ease', // Smooth transition for both
@@ -79,6 +79,29 @@ console.log("response",response)
               fullWidth
               value={user.userid}
               onChange={(e) => setUser({ ...user, userid: e.target.value })}
+              sx={{
+                mb: 2,
+                '& label': {
+                  color: '#555', // Default label color
+                },
+                '& label.Mui-focused': {
+                  color: '#007bff', // Label color when focused
+                },
+                '& .MuiOutlinedInput-root': {
+                  '& fieldset': {
+                    borderColor: '#ccc', // Default border color
+                  },
+                  '&:hover fieldset': {
+                    borderColor: '#007bff', // Border color on hover
+                  },
+                  '&.Mui-focused fieldset': {
+                    borderColor: '#007bff', // Border color when focused
+                  },
+                  '& input': {
+                    color: '#333', // Text color inside the input
+                  },
+                },
+              }}
             />
           </Box>
 
@@ -92,6 +115,29 @@ console.log("response",response)
               value={user.password}
               onChange={(e) => setUser({ ...user, password: e.target.value })}
               onKeyDown={handleKeyPress} // Detect Enter key press
+              sx={{
+                mb: 2,
+                '& label': {
+                  color: '#555', // Default label color
+                },
+                '& label.Mui-focused': {
+                  color: '#007bff', // Label color when focused
+                },
+                '& .MuiOutlinedInput-root': {
+                  '& fieldset': {
+                    borderColor: '#ccc', // Default border color
+                  },
+                  '&:hover fieldset': {
+                    borderColor: '#007bff', // Border color on hover
+                  },
+                  '&.Mui-focused fieldset': {
+                    borderColor: '#007bff', // Border color when focused
+                  },
+                  '& input': {
+                    color: '#333', // Text color inside the input
+                  },
+                },
+              }}
             />
           </Box>
 
