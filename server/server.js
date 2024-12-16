@@ -2,7 +2,8 @@ const express=require('express')
 const dotenv=require('dotenv')
 const path=require('path')
 const cors=require('cors')
-dotenv.config({path:path.join(__dirname, "src/config/.env")})
+dotenv.config({path:path.join(__dirname, "src/config/.env")})   //For professional and team-based development: Use this.it handles a wider range of cases and reduces potential issues.
+// or dotenv.config({path:path.resolve(__dirname, "./src/config/.env")})  For small-scale projects or specific cases where you are confident in the input paths: Use this for simplicity and performance.
 const dbConnection=require('./src/config/Databaseconnection');
 const app=express()
 

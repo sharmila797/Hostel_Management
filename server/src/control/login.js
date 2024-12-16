@@ -2,7 +2,6 @@
 
 
 
-
 exports.fetchUser =async(req,res)=>{
     const {userid,password}=req.body;
   

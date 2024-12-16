@@ -1,28 +1,73 @@
 import React, { useState } from 'react';
-import { TextField, Button, Typography, Container, Card, CardContent, Box } from '@mui/material';
+import { TextField, Button, Typography, Container, Card, CardContent, Box, InputAdornment, IconButton } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { fetchUser } from '../services/userlogin/userServices'; // Ensure this is correctly set up
+import Visibility from '@mui/icons-material/Visibility';
+import VisibilityOff from '@mui/icons-material/VisibilityOff';
+import { useAuth } from '../context/AuthContext';
 import srm from '../Images/srm.png';
 
 const LoginForm = () => {
-  const [user, setUser] = useState({ userid: '', password: '' });
+  const [user, setUser] = useState({ userid: '', password: '' , showPassword: false,});
   const [error, setError] = useState('');
   const navigate = useNavigate();
+  const { login } = useAuth(); 
+
+  // const handleLogin = async () => {
+  //   if (!user.userid || !user.password) {
+  //     setError('Please enter both UserID and Password');
+  //     return;
+  //   }
+
+  //   try {
+  //     const response = await fetchUser(user); // Call the login API
+  //     console.log("API Response:", response);
+
+  //     if (response.data.success) {
+  //       const userData = response.data.data; // Extract user data from the response
+  //       setError('');
+  //       alert('Login successful!');
+
+  //       // Save the user data to localStorage
+  //       localStorage.setItem('users', JSON.stringify(userData));
+
+        
+  //       // Navigate based on the user's role
+  //       const role = userData.role; // Get role from the response data
+  //       if (role === 'Admin') {
+  //         navigate('/admin-dashboard');
+  //       } else if (role === 'Warden') {
+  //         navigate('/warden-dashboard');
+  //       } else {
+  //         setError('Unauthorized Role');
+  //       }
+  //     } else {
+  //       setError('Invalid UserID or Password');
+  //     }
+  //   } catch (err) {
+  //     console.error("Login Error:", err);
+  //     setError('Something went wrong. Please try again.');
+  //   }
+  // };
+
 
   const handleLogin = async () => {
     if (!user.userid || !user.password) {
       setError('Please enter both UserID and Password');
       return;
     }
-
+  
     try {
-      const response = await fetchUser(user);
-console.log("response",response)
+      const response = await fetchUser(user); // Call the login API
+      console.log("response",response)
       if (response.data.success) {
-        let role = response.data.data.role;
-        setError('');
-        alert('Login successful!');
+        const userData = response.data.data;
+        login(userData); // Save user data in context
+        console.log("cons")
+        const role = userData.role;
+        
         if (role === 'Admin') {
+          console.log("cons",typeof(role))
           navigate('/admin-dashboard');
         } else if (role === 'Warden') {
           navigate('/warden-dashboard');
@@ -33,26 +78,45 @@ console.log("response",response)
         setError('Invalid UserID or Password');
       }
     } catch (err) {
+      console.error('Login Error:', err);
       setError('Something went wrong. Please try again.');
     }
   };
+  
 
-  const handleKeyPress=(e)=>{
-    if(e.key === 'Enter')
-    {
+  const handleKeyPress = (e) => {
+    if (e.key === 'Enter') {
       handleLogin();
     }
-  }
+  };
+
+
+  const handleClickShowPassword = () => {
+    setUser({
+      ...user,
+      showPassword: !user.showPassword,
+    });
+  };
+
+  const handleMouseDownPassword = (event) => {
+    event.preventDefault();
+  };
+
   return (
-    <Container maxWidth="xs" sx={{ display: 'flex',mt:15, minHeight: '50vh'}}>
-      <Card sx={{ width: '100%',borderRadius: '16px',  // Border radius for rounded corners
-  border: '1px solid #d1d5db',
-  boxShadow: '0px 4px 12px rgba(0, 0, 0, 0.1)', // Initial shadow
-  transition: 'transform 0.3s ease, box-shadow 0.3s ease', // Smooth transition for both
-  '&:hover': {
-    transform: 'scale(1.05)', // Zoom-in effect on hover
-    boxShadow: '0px 6px 18px rgba(0, 0, 0, 0.2)' // Enhance shadow on hover
-  },}}>
+    <Container maxWidth="xs" sx={{ display: 'flex', mt: 15, minHeight: '50vh' }}>
+      <Card
+        sx={{
+          width: '100%',
+          borderRadius: '16px',
+          border: '1px solid #d1d5db',
+          boxShadow: '0px 4px 12px rgba(0, 0, 0, 0.1)',
+          transition: 'transform 0.3s ease, box-shadow 0.3s ease',
+          '&:hover': {
+            transform: 'scale(1.05)',
+            boxShadow: '0px 6px 18px rgba(0, 0, 0, 0.2)',
+          },
+        }}
+      >
         <CardContent>
           {/* Logo Section */}
           <Box sx={{ display: 'flex', justifyContent: 'center', mb: 3 }}>
@@ -81,25 +145,13 @@ console.log("response",response)
               onChange={(e) => setUser({ ...user, userid: e.target.value })}
               sx={{
                 mb: 2,
-                '& label': {
-                  color: '#555', // Default label color
-                },
-                '& label.Mui-focused': {
-                  color: '#007bff', // Label color when focused
-                },
+                '& label': { color: '#555' },
+                '& label.Mui-focused': { color: '#007bff' },
                 '& .MuiOutlinedInput-root': {
-                  '& fieldset': {
-                    borderColor: '#ccc', // Default border color
-                  },
-                  '&:hover fieldset': {
-                    borderColor: '#007bff', // Border color on hover
-                  },
-                  '&.Mui-focused fieldset': {
-                    borderColor: '#007bff', // Border color when focused
-                  },
-                  '& input': {
-                    color: '#333', // Text color inside the input
-                  },
+                  '& fieldset': { borderColor: '#ccc' },
+                  '&:hover fieldset': { borderColor: '#007bff' },
+                  '&.Mui-focused fieldset': { borderColor: '#007bff' },
+                  '& input': { color: '#333' },
                 },
               }}
             />
@@ -109,40 +161,54 @@ console.log("response",response)
           <Box sx={{ mb: 7 }}>
             <TextField
               label="Password"
-              type="password"
+              type={user.showPassword ? 'text' : 'password'}
               variant="outlined"
               fullWidth
               value={user.password}
               onChange={(e) => setUser({ ...user, password: e.target.value })}
               onKeyDown={handleKeyPress} // Detect Enter key press
+              slotProps={{
+              input:{
+              endAdornment:(
+                <InputAdornment> 
+                  <IconButton
+                    size="small"
+                    aria-label="toggle password visibility"
+                    onClick={handleClickShowPassword}
+                    onMouseDown={handleMouseDownPassword}
+                  >
+                    {user.showPassword ? (
+                      <VisibilityOff fontSize="small" />
+                    ) : (
+                      <Visibility fontSize="small" />
+                    )}
+                  </IconButton>
+                </InputAdornment>
+              ),
+            },
+          }}
               sx={{
                 mb: 2,
-                '& label': {
-                  color: '#555', // Default label color
-                },
-                '& label.Mui-focused': {
-                  color: '#007bff', // Label color when focused
-                },
+                '& label': { color: '#555' },
+                '& label.Mui-focused': { color: '#007bff' },
                 '& .MuiOutlinedInput-root': {
-                  '& fieldset': {
-                    borderColor: '#ccc', // Default border color
-                  },
-                  '&:hover fieldset': {
-                    borderColor: '#007bff', // Border color on hover
-                  },
-                  '&.Mui-focused fieldset': {
-                    borderColor: '#007bff', // Border color when focused
-                  },
-                  '& input': {
-                    color: '#333', // Text color inside the input
-                  },
+                  '& fieldset': { borderColor: '#ccc' },
+                  '&:hover fieldset': { borderColor: '#007bff' },
+                  '&.Mui-focused fieldset': { borderColor: '#007bff' },
+                  '& input': { color: '#333' },
                 },
               }}
             />
           </Box>
 
           {/* Login Button */}
-          <Button variant="contained" color="primary" fullWidth onClick={handleLogin}>
+          <Button
+            variant="contained"
+            color="primary"
+            fullWidth
+            sx={{ borderRadius: '10px' }}
+            onClick={handleLogin}
+          >
             Login
           </Button>
         </CardContent>
@@ -174,10 +240,22 @@ export default LoginForm;
 
 
 
+
+
+
+
+
+
+
+
+
+
+
 // import React, { useState } from 'react';
-// import { TextField, Button, Box, Typography, Container } from '@mui/material';
+// import { TextField, Button, Typography, Container, Card, CardContent, Box } from '@mui/material';
 // import { useNavigate } from 'react-router-dom';
-// import { fetchUser } from '../services/userlogin/userServices'; // Ensure this points to your correct API service
+// import { fetchUser } from '../services/userlogin/userServices'; // Ensure this is correctly set up
+// import srm from '../Images/srm.png';
 
 // const LoginForm = () => {
 //   const [user, setUser] = useState({ userid: '', password: '' });
@@ -186,73 +264,168 @@ export default LoginForm;
 
 //   const handleLogin = async () => {
 //     if (!user.userid || !user.password) {
-//       setError('Please enter both userid and password');
+//       setError('Please enter both UserID and Password');
 //       return;
 //     }
 
 //     try {
-//       // Log user details to console (for debugging)
-//       console.log('User details:', user);
-
-//       // API call to validate the user credentials
 //       const response = await fetchUser(user);
-
-// let Role=response.data.data,role
-//       // Check if the response is successful
+// console.log("response",response)
 //       if (response.data.success) {
-//         setError(''); // Clear previous error messages
+//         let role = response.data.data.role;
+//         setError('');
 //         alert('Login successful!');
-//         if(Role === "Admin")
-//         {
-//           navigate('/admin-dashboard'); // Redirect to the admin dashboard
-//         }
-//         else{
+//         if (role === 'Admin') {
+//           navigate('/admin-dashboard');
+//         } else if (role === 'Warden') {
 //           navigate('/warden-dashboard');
+//         } else {
+//           setError('Unauthorized Role');
 //         }
-       
 //       } else {
-//         setError('Invalid userid or password');
+//         setError('Invalid UserID or Password');
 //       }
 //     } catch (err) {
-//       // Handle any errors that occur during the API request
 //       setError('Something went wrong. Please try again.');
 //     }
 //   };
 
+//   const handleKeyPress=(e)=>{
+//     console.log("key value",e.key)
+//     if(e.key === 'Enter')
+//     {
+//       handleLogin();
+//     }
+//   }
 //   return (
-//     <Container maxWidth="xs">
-//       <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', mt: 4 }}>
-//         <Typography variant="h5" sx={{ mb: 2 }}>
-//           Login
-//         </Typography>
-//         {error && (
-//           <Typography color="error" variant="body2" sx={{ mb: 2 }}>
-//             {error}
+//     <Container maxWidth="xs" sx={{ display: 'flex',mt:15, minHeight: '50vh'}}>
+//       <Card sx={{ width: '100%',borderRadius: '16px',  // Border radius for rounded corners
+//   border: '1px solid #d1d5db',
+//   boxShadow: '0px 4px 12px rgba(0, 0, 0, 0.1)', // Initial shadow
+//   transition: 'transform 0.3s ease, box-shadow 0.3s ease', // Smooth transition for both
+//   '&:hover': {
+//     transform: 'scale(1.05)', // Zoom-in effect on hover
+//     boxShadow: '0px 6px 18px rgba(0, 0, 0, 0.2)' // Enhance shadow on hover
+//   },}}>
+//         <CardContent>
+//           {/* Logo Section */}
+//           <Box sx={{ display: 'flex', justifyContent: 'center', mb: 3 }}>
+//             <Box component="img" src={srm} alt="Logo" sx={{ width: 60, height: 60 }} />
+//           </Box>
+
+//           {/* Title */}
+//           <Typography variant="h5" align="center" sx={{ fontWeight: 'bold', mb: 4 }}>
+//             Login
 //           </Typography>
-//         )}
-//         <TextField
-//           label="UserID"
-//           variant="outlined"
-//           fullWidth
-//           value={user.userid}
-//           onChange={(e) => setUser({ ...user, userid: e.target.value })}
-//           sx={{ mb: 2 }}
-//         />
-//         <TextField
-//           label="Password"
-//           type="password"
-//           variant="outlined"
-//           fullWidth
-//           value={user.password}
-//           onChange={(e) => setUser({ ...user, password: e.target.value })}
-//           sx={{ mb: 2 }}
-//         />
-//         <Button variant="contained" fullWidth onClick={handleLogin}>
-//           Login
-//         </Button>
-//       </Box>
+
+//           {/* Error Message */}
+//           {error && (
+//             <Typography color="error" variant="body2" align="center" sx={{ mb: 3 }}>
+//               {error}
+//             </Typography>
+//           )}
+
+//           {/* UserID Input */}
+//           <Box sx={{ mb: 4 }}>
+//             <TextField
+//               label="UserID"
+//               variant="outlined"
+//               fullWidth
+//               value={user.userid}
+//               onChange={(e) => setUser({ ...user, userid: e.target.value })}
+//               sx={{
+               
+//                 mb: 2,
+//                 '& label': {
+//                   color: '#555', // Default label color
+//                 },
+//                 '& label.Mui-focused': {
+//                   color: '#007bff', // Label color when focused
+//                 },
+//                 '& .MuiOutlinedInput-root': {
+//                   '& fieldset': {
+//                     borderColor: '#ccc', // Default border color
+//                   },
+//                   '&:hover fieldset': {
+//                     borderColor: '#007bff', // Border color on hover
+//                   },
+//                   '&.Mui-focused fieldset': {
+//                     borderColor: '#007bff', // Border color when focused
+//                   },
+//                   '& input': {
+//                     color: '#333', // Text color inside the input
+//                   },
+//                 },
+//               }}
+//             />
+//           </Box>
+
+//           {/* Password Input */}
+//           <Box sx={{ mb: 7 }}>
+//             <TextField
+//               label="Password"
+//               type="password"
+//               variant="outlined"
+//               fullWidth
+//               value={user.password}
+//               onChange={(e) => setUser({ ...user, password: e.target.value })}
+//               onKeyDown={handleKeyPress} // Detect Enter key press
+//               sx={{
+//                 mb: 2,
+//                 '& label': {
+//                   color: '#555', // Default label color
+//                 },
+//                 '& label.Mui-focused': {
+//                   color: '#007bff', // Label color when focused
+//                 },
+//                 '& .MuiOutlinedInput-root': {
+//                   '& fieldset': {
+//                     borderColor: '#ccc', // Default border color
+//                   },
+//                   '&:hover fieldset': {
+//                     borderColor: '#007bff', // Border color on hover
+//                   },
+//                   '&.Mui-focused fieldset': {
+//                     borderColor: '#007bff', // Border color when focused
+//                   },
+//                   '& input': {
+//                     color: '#333', // Text color inside the input
+//                   },
+//                 },
+//               }}
+//             />
+//           </Box>
+
+//           {/* Login Button */}
+//           <Button variant="contained" color="primary" fullWidth sx={{borderRadius:'10px'}} onClick={handleLogin}>
+//             Login
+//           </Button>
+//         </CardContent>
+//       </Card>
 //     </Container>
 //   );
 // };
 
 // export default LoginForm;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

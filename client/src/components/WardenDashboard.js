@@ -1,14 +1,14 @@
-import React,{useState} from 'react';
-import { Box, Typography, Drawer, AppBar, Toolbar, IconButton, List, ListItem, ListItemIcon, ListItemText, Collapse, CssBaseline, } from '@mui/material';
+import React,{useEffect, useState} from 'react';
+import { Box, Typography, Drawer, AppBar, Toolbar, IconButton, List, ListItem, ListItemIcon, ListItemText, CssBaseline, Button, } from '@mui/material';
 import {
-    Home as HomeIcon, Person as PersonIcon, Settings as SettingsIcon, ExpandLess, ExpandMore,
+    Home as HomeIcon, Person as PersonIcon,
     MenuOpenOutlined,
-    EditNote,
-    RemoveRedEye,Apartment
+    EditNote,Apartment
   } from '@mui/icons-material';
   // import ApartmentIcon from '@mui/icons-material/Apartment';
-import MenuIcon from '@mui/icons-material/Menu';
-import { Link, Outlet, useLocation } from 'react-router-dom';
+// import MenuIcon from '@mui/icons-material/Menu';
+import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 import srm from '../Images/srm.png';
 import seal from '../Images/seal.png';
 
@@ -19,9 +19,23 @@ const WardenDashboard = () => {
   const [open, setOpen] =useState(false);
   const [openSubmenu, setOpenSubmenu] = useState(null); // State to track which submenu is open
   const location = useLocation(); // Get the current location to determine the selected menu item
-
+const navigate=useNavigate();
+const {logout}=useAuth();
   const toggleDrawer = () => setOpen(!open);
 
+
+
+  useEffect(() => {
+    window.history.pushState(null, null, window.location.href);
+    const handlePopState = () => {
+      navigate('/'); // Redirect back to login on back navigation
+    };
+    window.addEventListener('popstate', handlePopState);
+
+    return () => {
+      window.removeEventListener('popstate', handlePopState);
+    };
+  }, [navigate]);
 
 
     // Function to toggle submenu (profile or home)
@@ -31,6 +45,12 @@ const WardenDashboard = () => {
         setOpenSubmenu(openSubmenu === menu ? null : menu);
       };
     
+
+const onlogout=()=>{
+  logout();
+  navigate('/')
+}
+
 
       // Function to determine if the menu item is selected
       const isSelected = (path) => location.pathname === path;
@@ -72,22 +92,43 @@ const WardenDashboard = () => {
  <CssBaseline />
 
    {/* Navbar */}  
-      <AppBar 
-       sx={{
-        zIndex: (theme) => theme.zIndex.drawer + 1,
-        backgroundColor: '#1976D2',
-        width: open ? `calc(100% - ${drawerWidth}px)` : 'calc(100% - 84px)', // Adjust based on drawer state
-        transition: 'width 0.3s ease', // Smooth transition for responsiveness
-      }}
-      position="fixed">
-        <Toolbar>
-          <IconButton edge="start" color="inherit" onClick={toggleDrawer} sx={{ mr: 2 }}aria-label="open drawer">
-            {/* <MenuIcon /> */}
-            <MenuOpenOutlined />
-          </IconButton>
-          <Typography variant="h6">Warden Dashboard</Typography>
-        </Toolbar>
-      </AppBar>
+   <AppBar
+  sx={{
+    zIndex: (theme) => theme.zIndex.drawer + 1,
+    backgroundColor: '#1976D2',
+    width: open ? `calc(100% - ${drawerWidth}px)` : 'calc(100% - 84px)', // Adjust based on drawer state
+    transition: 'width 0.3s ease', // Smooth transition for responsiveness
+  }}
+  position="fixed"
+>
+  <Toolbar>
+    <IconButton edge="start" color="inherit" onClick={toggleDrawer} sx={{ mr: 2 }} aria-label="open drawer">
+      <MenuOpenOutlined />
+    </IconButton>
+    <Typography variant="h6" sx={{ flexGrow: 1 }}>
+      Warden Dashboard
+    </Typography>
+    <Box>
+      <Button
+        variant="contained"
+        color="secondary"
+        onClick={onlogout}
+        sx={{
+          backgroundColor: '#f44336',
+          '&:hover': {
+            backgroundColor: '#d32f2f',
+          },
+          textTransform:'none', // Keeps text casing natural
+          fontWeight: 'bold', // Improves readability
+          padding: '6px 16px', // Adjust padding for better spacing
+          borderRadius:'8px',
+        }}
+      >
+        Logout
+      </Button>
+    </Box>
+  </Toolbar>
+</AppBar>
   {/* Sidebar */}
       <Drawer  sx={{
           width: open ? drawerWidth : '84px',
