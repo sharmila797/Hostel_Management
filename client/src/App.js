@@ -6,7 +6,7 @@ import {AuthProvider} from './context/AuthContext'
 import LoginForm from './components/LoginForm';
 import AdminDashboard from './components/AdminDashboard ';
 import WardenDashboard from './components/WardenDashboard';
-import PrivateRoute from './components/PrivateRoute';
+import ProtectedRoutes from './components/protectedRoutes';
 import Unauthorized from './components/Unauthorized';
 
 
@@ -23,9 +23,9 @@ function App() {
         <Route
           path="/admin-dashboard"
           element={
-            <PrivateRoute role="Admin" allowedRoles={['Admin']}>
+            <ProtectedRoutes role="Admin" allowedRoles={['Admin']}>
               <AdminDashboard />
-            </PrivateRoute>
+            </ProtectedRoutes>
           }
         />
 
@@ -33,9 +33,9 @@ function App() {
         <Route
           path="/warden-dashboard"
           element={
-            <PrivateRoute role="Warden" allowedRoles={[ 'Warden']}>
+            <ProtectedRoutes role="Warden" allowedRoles={[ 'Warden']}>
               <WardenDashboard />
-            </PrivateRoute>
+            </ProtectedRoutes>
           }
         />
 

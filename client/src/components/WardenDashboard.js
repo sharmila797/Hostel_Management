@@ -8,7 +8,8 @@ import {
   // import ApartmentIcon from '@mui/icons-material/Apartment';
 // import MenuIcon from '@mui/icons-material/Menu';
 import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
+// import { useAuth } from '../context/AuthContext';
+import {logout} from '../services/auth/authServices'
 import srm from '../Images/srm.png';
 import seal from '../Images/seal.png';
 
@@ -20,15 +21,16 @@ const WardenDashboard = () => {
   const [openSubmenu, setOpenSubmenu] = useState(null); // State to track which submenu is open
   const location = useLocation(); // Get the current location to determine the selected menu item
 const navigate=useNavigate();
-const {logout}=useAuth();
+// const {logout}=useAuth();
   const toggleDrawer = () => setOpen(!open);
 
 
 
   useEffect(() => {
+    // Prevent back and forward navigation using window.history API
     window.history.pushState(null, null, window.location.href);
     const handlePopState = () => {
-      navigate('/'); // Redirect back to login on back navigation
+      navigate('/'); // Redirect to login if user tries to use back button
     };
     window.addEventListener('popstate', handlePopState);
 
@@ -36,6 +38,7 @@ const {logout}=useAuth();
       window.removeEventListener('popstate', handlePopState);
     };
   }, [navigate]);
+
 
 
     // Function to toggle submenu (profile or home)
@@ -46,10 +49,14 @@ const {logout}=useAuth();
       };
     
 
-const onlogout=()=>{
-  logout();
-  navigate('/')
-}
+      const onlogout = async() => {
+        // logout();
+    
+        const response = await logout();
+        console.log("res",response)
+        if(response.data.success)
+        navigate('/');
+      };
 
 
       // Function to determine if the menu item is selected

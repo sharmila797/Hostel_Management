@@ -1,16 +1,19 @@
 const express = require('express');
-const { fetchUser } = require('../../control/login');
-const verifyToken  = require('../../middlewares/authMiddleware');
+// const { fetchUser } = require('../../controller/login');
+const authMiddleware = require('../../middlewares/authMiddleware');
+const {manualAuth,logout,fetchUser}=require('../../controller/login')
 const router = express.Router();
 
 // Login Route
-router.post('/login', fetchUser);
+// router.post('/login', fetchUser);
+router.route('/manual').post(manualAuth)
+router.route('/logout').post(logout)
+router.route('/getuser/:userId').get(fetchUser)
+
 
 // Protected Route Example
-router.get('/protected', verifyToken, (req, res) => {
-
-    console.log("protected",req.user)
-    res.status(200).json({ success: true, message: 'Welcome to the protected route', user: req.user });
-});
+// router.get('/protected', verifyToken, (req, res) => {
+//     res.json({ success: true, message: 'Access granted' });
+//   });
 
 module.exports = router;

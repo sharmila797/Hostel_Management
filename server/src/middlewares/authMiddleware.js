@@ -1,33 +1,26 @@
-const jwt = require('jsonwebtoken');
-
-const authMiddleware = (allowedRoles) => (req, res, next) => {
-  const token = req.headers.authorization?.split(' ')[1];
-
-  if (!token) {
-    return res.status(401).json({ message: 'Unauthorized: Token is missing' });
-  }
-
+const verifyToken = (token, secret) => {
   try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
-
-    if (!allowedRoles.includes(decoded.role)) {
-      return res.status(403).json({ message: 'Forbidden: Access denied' });
-    }
-
-    req.user = decoded;
-    next();
+      return jwt.verify(token, secret);
   } catch (err) {
-    return res.status(401).json({ message: 'Unauthorized: Invalid token' });
+      console.log(err);
+      return null;
   }
 };
 
-module.exports = authMiddleware;
+const authMiddleware = (req, res, next) => {
+  const token = req.cookie.token;
 
+  if (!token) return res.redirect('/');
 
+  const verified = verifyToken(token, process.env.JWT_SECRET);
+  if (verified) {
+      req.user = verified;
+      return next();
+  }
+  res.redirect('/');
+};
 
-
-
-
+module.exports = authMiddleware
 
 
 
@@ -41,14 +34,40 @@ module.exports = authMiddleware;
 // const jwt = require('jsonwebtoken');
 
 // exports.verifyToken = (req, res, next) => {
-//     const token = req.header('Authorization');
-//     if (!token) return res.status(401).json({ success: false, message: 'Access denied' });
+//   const token = req.cookies.authToken;
 
-//     try {
-//         const verified = jwt.verify(token, process.env.JWT_SECRET);
-//         req.user = verified;
-//         next();
-//     } catch (err) {
-//         res.status(400).json({ success: false, message: 'Invalid token' });
-//     }
+//   if (!token) {
+//     return res.status(401).json({ success: false, message: 'Unauthorized' });
+//   }
+
+//   try {
+//     const decoded = jwt.verify(token, process.env.JWT_SECRET);
+//     req.user = decoded;
+//     next();
+//   } catch (err) {
+//     return res.status(403).json({ success: false, message: 'Invalid or expired token' });
+//   }
 // };
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
