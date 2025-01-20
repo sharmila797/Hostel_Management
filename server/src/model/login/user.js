@@ -13,7 +13,7 @@ const UserSchema = new mongoose.Schema({
   role: { type: String, required: true }
 }, { collection: "User" });
 
-// Pre-save middleware to hash the password before saving
+// Pre-save mongoose middleware to hash the password before saving
 UserSchema.pre('save', async function (next) {
   if (!this.isModified('password')) {
     return next();
@@ -54,9 +54,14 @@ const createUser = async (userid, name, email, password, role) => {
   }
 };
 
+
+
+
+
 // Create Admin and Warden users
 createUser('admin', 'Admin', 'admin@example.com', 'password123', 'Admin');
 createUser('warden', 'Warden', 'warden@example.com', 'password123', 'Warden');
+// createUser('student','Student','student@example.com','password123','Student');
 
 module.exports = UserModel;
 

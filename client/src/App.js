@@ -8,6 +8,8 @@ import AdminDashboard from './components/AdminDashboard ';
 import WardenDashboard from './components/WardenDashboard';
 import ProtectedRoutes from './components/protectedRoutes';
 import Unauthorized from './components/Unauthorized';
+import StudentDashboard from './components/StudentDashboard';
+import ProfileUpdate from './components/ProfileUpdate'; 
 
 
 
@@ -38,6 +40,27 @@ function App() {
             </ProtectedRoutes>
           }
         />
+
+         {/* Protected route for student dashboard */}
+<Route
+path='/student-dashboard'
+element={
+  <ProtectedRoutes role="Student" allowedRoles={['Student']}>
+    <StudentDashboard/>
+  </ProtectedRoutes>
+}
+/>
+
+
+         {/* <Route element={
+          <ProtectedRoutes role="Student" allowedRoles={['Student']} />}>
+          <Route path="/student-dashboard" element={<StudentDashboard />} />
+        </Route> */}
+
+         {/* Profile update page */}
+         {/* <Route element={<ProtectedRoutes allowedRoles={['Student']} />}>
+          <Route path="/update-profile" element={<ProfileUpdate />} />
+        </Route> */}
 
 
 <Route path="/unauthorized" element={<Unauthorized />} />

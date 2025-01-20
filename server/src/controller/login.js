@@ -7,7 +7,7 @@ const {generateToken}=require("../utils/jwt")
 // Manual Auth
 
 exports.manualAuth = async (req, res) => {
-  console.log("Manual Login", req.body);
+  // console.log("Manual Login", req.body);
   try {
     const user = await UserModel.findOne({ $and: [{ userid: req.body.userid }] });
     console.log(user);
@@ -29,7 +29,7 @@ exports.manualAuth = async (req, res) => {
     }
 
     if (await user.isValidPassword(req.body.password)) {
-      console.log("User verified");
+      // console.log("User verified");
 
       const token = generateToken(user.userid, user.role);
       req.session.user = user;
@@ -131,9 +131,10 @@ exports.logout =  (req, res) => {
 // Fetch logined User Data
 exports.fetchUser = async(req, res) =>{
     try {
+      // console.log("received data",req.params.userId)
 
-        const user = await userModel.findOne({userid: String(req.params.userId)})
-        console.log("Fetech User")
+        const user = await UserModel.findOne({userid: String(req.params.userId)})
+        // console.log("Fetech User")
         console.log(user)
         if (!user) {
             return res.status(404).json({

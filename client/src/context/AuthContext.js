@@ -1,6 +1,7 @@
 import React, { createContext, useState, useEffect, useContext } from 'react';
 import {Cookies} from 'react-cookie'
 import {fetchUser} from '../services/auth/authServices'
+import { fetchUserstudent } from '../services/student/studentServices';
 import {jwtDecode} from "jwt-decode";
 
 export const AuthContext = createContext();
@@ -16,9 +17,19 @@ export const AuthProvider = ({ children }) => {
       try{
         const token = cookies.get('token');
         const decoded = jwtDecode(token);
+        console.log("authcontext",decoded);
+        if(decoded.role === 'Student')
+        {
+          const response=await fetchUserstudent(decoded.userid)
+          setUser(response.data.user)
+          setIsAuthenticated(true)
+
+        }
+        else{
         const response = await fetchUser(decoded.userid);
         setUser(response.data.user)
         setIsAuthenticated(true)
+        }
       }catch(error){
         cookies.remove('token')
         setIsAuthenticated(false);

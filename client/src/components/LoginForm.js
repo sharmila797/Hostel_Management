@@ -9,6 +9,7 @@ import {
 } from "@mui/material";
 import { resolvePath, useNavigate } from "react-router-dom";
 import {manualAuth,fetchUser} from "../services/auth/authServices";
+import { fetchStudentDetails } from "../services/student/studentServices";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 // import { useAuth } from "../context/AuthContext";
@@ -17,6 +18,7 @@ import srmist from "../Images/srmist.jpg"; // Background image
 import { AuthContext } from "../context/AuthContext";
 
 const LoginForm = () => {
+  
   const { setUser, setIsAuthenticated } = useContext(AuthContext);
   const [userr, setUserr] = useState({ userid: "", password: "", showPassword: false });
   const [loading, setLoading] = useState(false);
@@ -33,6 +35,9 @@ const LoginForm = () => {
     }
     
     try {
+
+if((userr.userid === 'admin')||(userr.userid === 'warden'))
+{
       const response = await manualAuth(userr);
       //  const response = await fetchUser(user);
       console.log("response",response)
@@ -49,13 +54,40 @@ console.log("role",role)
           navigate("/admin-dashboard");
         } else if (role === "Warden") {
           navigate("/warden-dashboard");
-        } else {
+        } 
+        else {
           setError("Unauthorized Role");
         }
       } else {
         setError("Invalid UserID or Password");
       }
-    } catch (err) {
+    }
+    else{
+      console.log("inside else",userr)
+const response= await fetchStudentDetails(userr);
+console.log("response student",response)
+if (response.data.success) {
+
+  // const userData = response.data.data;
+  // login(userData);
+  // const role = userData.role;
+  setIsAuthenticated(true);
+              setUser(response.data.user);
+              const role=response.data.user.role;
+console.log("role",role)
+  if(role === "Student")
+  {
+    navigate("/student-dashboard")
+  }
+  else {
+    setError("Unauthorized Role");
+  }
+} else {
+  setError("Invalid UserID or Password");
+}
+
+
+    } }catch (err) {
       console.error("Login Error:", err);
       setError("Invalid UserID or Password");
     }finally{

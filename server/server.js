@@ -10,6 +10,7 @@ const dbConnection=require('./src/config/Databaseconnection');
 const app=express()
 
 const userlogin=require("./src/routes/login/user")
+const studentlogin=require("./src/routes/student/student")
 
 dbConnection();
 app.use(cors(
@@ -38,6 +39,7 @@ app.use(session({
 app.use(cookieParser());  //parse cookies
 
 app.use('/api/user',userlogin);
+app.use('/api/student',studentlogin);
 
 
 
